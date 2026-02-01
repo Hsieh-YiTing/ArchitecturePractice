@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="ArchitecturePractice.Common/ArchitecturePractice.Common.csproj" />
+  <Project Path="ArchitecturePractice.Core/ArchitecturePractice.Core.csproj" />
+  <Project Path="ArchitecturePractice.Repositories/ArchitecturePractice.Repositories.csproj" />
+  <Project Path="ArchitecturePractice.Service/ArchitecturePractice.Services.csproj" />
   <Project Path="ArchitecturePractice/ArchitecturePractice.csproj" />
 </Solution>

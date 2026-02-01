@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ArchitecturePractice.Core\ArchitecturePractice.Core.csproj" />
+  </ItemGroup>
+
 </Project>
