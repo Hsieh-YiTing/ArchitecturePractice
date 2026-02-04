@@ -6,4 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ArchitecturePractice.Core\ArchitecturePractice.Core.csproj" />
+    <ProjectReference Include="..\ArchitecturePractice.Repositories\ArchitecturePractice.Repositories.csproj" />
+    <ProjectReference Include="..\ArchitecturePractice.Service\ArchitecturePractice.Services.csproj" />
+  </ItemGroup>
+
 </Project>

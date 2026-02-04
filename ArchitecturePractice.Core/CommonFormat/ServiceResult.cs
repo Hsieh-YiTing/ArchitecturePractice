@@ -1,5 +1,8 @@
 ﻿namespace ArchitecturePractice.Core.CommonFormat
 {
+    /// <summary>
+    /// 統一回傳Service執行的結果。
+    /// </summary>
     public class ServiceResult<T> : BaseResult<T>
     {
         /// <summary>

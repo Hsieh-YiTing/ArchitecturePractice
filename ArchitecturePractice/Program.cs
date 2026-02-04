@@ -1,7 +1,17 @@
+using ArchitecturePractice.Services;
+using ArchitecturePractice.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// 取得資料庫連線字串
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("找不到資料庫連線字串。");
+
+// 註冊管理
+builder.Services.AddService()
+                .AddRepository(connectionString);  
 
 var app = builder.Build();
 
@@ -22,7 +32,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=ExportReport}/{action=ExportPage}/{id?}")
     .WithStaticAssets();
 
 

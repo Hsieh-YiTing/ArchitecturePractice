@@ -1,0 +1,365 @@
+﻿@using ArchitecturePractice.Core.ExportReport.ReportSetting
+@using ArchitecturePractice.ViewModel
+
+@section Scripts {
+    <script src="~/js/export.js" defer asp-append-version="true"></script>
+}
+
+<h2>報表匯出測試</h2>
+
+<!-- Tabs控制 -->
+<nav>
+    <div class="nav nav-tabs">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personal-health-examination-tab">
+            個人健檢報表匯出
+        </button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#summary-report-tab">
+            總表
+        </button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#exception-report-tab">
+            異常統計表
+        </button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#company-report-tab">
+            公司格式報告匯出
+        </button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#questionnaire-report-tab">
+            問卷統計匯出
+        </button>
+    </div>
+</nav>
+
+<!-- 對應Tab內容 -->
+<div class="tab-content">
+    <!-- 個人健檢報表匯出Tab -->
+    <div class="tab-pane active" id="personal-health-examination-tab">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label" for="personal-examine-start-date">健檢日期：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center gap-2">
+                        <input class="form-control" type="date" id="personal-examine-start-date" data-field="examineStartDate" />
+                        <span>~</span>
+                        <input class="form-control" type="date" id="personal-examine-end-date" data-field="examineEndDate" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="personal-company-select">公司：</label>
+                        <select class="form-select w-auto company-select" id="personal-company-select" asp-items="Model.CompanyItemList" data-group="personal-examine-select" data-field="selectedCompanyId">
+                            <option value="">請選擇公司</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex role" data-group="personal-examine-select">
+                        <label class="col-form-label" for="personal-role-select">一級單位：</label>
+                        <select class="form-select w-auto role-select" id="personal-role-select" data-group="personal-examine-select" data-field="selectedRoleId">
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="personal-package-code">套餐代碼：</label>
+                        <input class="form-control w-auto" type="text" id="personal-package-code" data-field="packageCode" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="personal-id">身分證號/病歷號：</label>
+                        <input class="form-control w-auto" type="text" id="personal-id" data-field="idOrChartNumber" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="personal-export-mode">報表類型：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<PersonalHealthExamOption>()" id="personal-export-mode" data-field="reportType">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="personal-export-format">報表格式：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ReportFormat>()" id="personal-export-format" data-field="reportFormat">
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-auto export-btn" type="button" data-report-tab="personal-health-examination-tab">匯出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 總表Tab -->
+    <div class="tab-pane" id="summary-report-tab">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label" for="summary-examine-start-date">健檢日期：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center gap-2">
+                        <input class="form-control" type="date" id="summary-examine-start-date" data-field="examineStartDate" />
+                        <span>~</span>
+                        <input class="form-control" type="date" id="summary-examine-end-date" data-field="examineEndDate" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-company-select">公司：</label>
+                        <select class="form-select w-auto company-select" id="summary-company-select" asp-items="Model.CompanyItemList" data-group="summary-select" data-field="selectedCompanyId">
+                            <option value="">請選擇公司</option>
+                        </select>
+                    </div>
+                    <div class="col-auto role" data-group="summary-select">
+                        <label class="col-form-label" for="summary-role-select">一級單位：</label>
+                        <select class="form-select w-auto role-select" id="summary-role-select" data-group="summary-select" data-field="selectedRoleId">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-employee-option-select">員工/員眷：</label>
+                        <select class="form-select w-auto" id="summary-employee-option-select" data-field="selectedEmployeeOption">
+                            <option value="1">員工+員眷</option>
+                            <option value="2">員工</option>
+                            <option value="3">員眷</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-contract-name">合約名稱：</label>
+                        <input class="form-control w-auto" type="text" id="summary-contract-name" data-field="contractName" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-package-code">套餐代碼：</label>
+                        <input class="form-control w-auto" type="text" id="summary-package-code" data-field="packageCode" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label">分類：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="summary-gender">性別</label>
+                            <input class="form-check-input" type="checkbox" id="summary-gender" data-field="isSelectedGender" data-target="#summary-gender-option" data-group="summary-classify" />
+                        </div>
+                        <div id="summary-gender-option">
+                            <select class="form-select w-auto" id="summary-gender-select" data-field="selectedGender">
+                                <option value="" selected disabled>請選擇性別</option>
+                                <option value="1">男</option>
+                                <option value="2">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-center ms-3">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="summary-age">年齡</label>
+                            <input class="form-check-input" type="checkbox" id="summary-age" data-field="isSelectedAge" data-target="#summary-age-option" data-group="summary-classify" />
+                        </div>
+                        <div class="d-flex align-items-center gap-2" id="summary-age-option">
+                            <input class="form-control" type="date" id="summary-born-start-date" data-field="bornStartDate" />
+                            <span>~</span>
+                            <input class="form-control" type="date" id="summary-born-end-date" data-field="bornEndDate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-id">身分證號/病歷號：</label>
+                        <input class="form-control w-auto" type="text" id="summary-id" data-field="idOrChartNumber" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-export-mode">報表類型：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<SummaryReportOption>()" id="summary-export-mode" data-field="reportType">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="summary-export-format">報表格式：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ReportFormat>()" id="summary-export-format" data-field="reportFormat">
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-auto export-btn" type="button" data-report-tab="summary-report-tab">匯出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 異常統計表Tab -->
+    <div class="tab-pane" id="exception-report-tab">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label" for="exception-examine-start-date">健檢日期：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center gap-2">
+                        <input class="form-control" type="date" id="exception-examine-start-date" />
+                        <span>~</span>
+                        <input class="form-control" type="date" id="exception-examine-end-date" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="exception-company-select">公司：</label>
+                        <select class="form-select w-auto company-select" id="exception-company-select" asp-items="Model.CompanyItemList" data-group="exception-select">
+                            <option value="">請選擇公司</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex role" data-group="exception-select">
+                        <label class="col-form-label" for="exception-role-select">一級單位：</label>
+                        <select class="form-select w-auto role-select" id="exception-role-select" data-group="exception-select">
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="exception-package-code">套餐代碼：</label>
+                        <input class="form-control w-auto" type="text" id="exception-package-code" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label">排行分類方式：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="exception-gender">性別</label>
+                            <input class="form-check-input" type="checkbox" id="exception-gender" data-target="#exception-gender-option" data-group="exception-classify" />
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex align-items-center ms-2">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="exception-age">年齡區間</label>
+                            <input class="form-check-input" type="checkbox" id="exception-age" data-target="#exception-age-option" data-group="exception-classify" />
+                        </div>
+                        <div class="d-flex align-items-center gap-2" id="exception-age-option">
+                            <input class="form-control w-auto" type="text" />
+                            <span>~</span>
+                            <input class="form-control w-auto" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="exception-id">身分證號/病歷號：</label>
+                        <input class="form-control w-auto" type="text" id="exception-id" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="exception-export-mode">報表類型：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ExceptionReportOption>()" id="exception-export-mode" data-field="reportType">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="exception-export-format">報表格式：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ReportFormat>()" id="exception-export-format" data-field="reportFormat">
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-auto export-btn" type="button" data-report-tab="exception-report-tab">匯出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 公司格式報告匯出Tab -->
+    <div class="tab-pane" id="company-report-tab">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label" for="company-examine-start-date">健檢日期：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center gap-2">
+                        <input class="form-control" type="date" id="company-examine-start-date" />
+                        <span>~</span>
+                        <input class="form-control" type="date" id="company-examine-end-date" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-company-select">公司：</label>
+                        <select class="form-select w-auto company-select" id="company-company-select" asp-items="Model.CompanyItemList" data-group="company-select">
+                            <option value="">請選擇公司</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex role" data-group="company-select">
+                        <label class="col-form-label" for="company-role-select">一級單位：</label>
+                        <select class="form-select w-auto role-select" id="company-role-select" data-group="company-select">
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-contract-name">合約名稱：</label>
+                        <input class="form-control w-auto" type="text" id="company-contract-name" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-package-code">套餐代碼：</label>
+                        <input class="form-control w-auto" type="text" id="company-package-code" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-id">身分證號/病歷號：</label>
+                        <input class="form-control w-auto" type="text" id="company-id" />
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-export-mode">報表類型：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<CompanyReportOption>()" id="company-export-mode" data-field="reportType">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="company-export-format">報表格式：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ReportFormat>()" id="company-export-format" data-field="reportFormat">
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-auto export-btn" type="button" data-report-tab="company-report-tab">匯出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 問卷統計匯出Tab -->
+    <div class="tab-pane" id="questionnaire-report-tab">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center mb-3 g-0">
+                    <div class="col-auto">
+                        <label class="col-form-label" for="questionnaire-examine-start-date">健檢日期：</label>
+                    </div>
+                    <div class="col-auto d-flex align-items-center gap-2">
+                        <input class="form-control" type="date" id="questionnaire-examine-start-date" />
+                        <span>~</span>
+                        <input class="form-control" type="date" id="questionnaire-examine-end-date" />
+                    </div>
+                </div>
+                <div class="row align-items-center mb-3">
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="questionnaire-company-select">公司：</label>
+                        <select class="form-select w-auto company-select" id="questionnaire-company-select" asp-items="Model.CompanyItemList" data-group="questionnaire-select">
+                            <option value="">請選擇公司</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex role" data-group="questionnaire-select">
+                        <label class="col-form-label" for="questionnaire-role-select">一級單位：</label>
+                        <select class="form-select w-auto role-select" id="questionnaire-role-select" data-group="questionnaire-select">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="questionnaire-employee-option-select">員工/員眷：</label>
+                        <select class="form-select w-auto" id="questionnaire-employee-option-select">
+                            <option value="1">員工+員眷</option>
+                            <option value="2">員工</option>
+                            <option value="3">員眷</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-none">
+                        <label class="col-form-label" for="questionnaire-export-mode">報表類型：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<QuestionnaireReportOption>()" id="questionnaire-export-mode" data-field="reportType">
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <label class="col-form-label" for="questionnaire-export-format">報表格式：</label>
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ReportFormat>()" id="questionnaire-export-format" data-field="reportFormat">
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-auto export-btn" type="button" data-report-tab="questionnaire-report-tab">匯出</button>
+            </div>
+        </div>
+    </div>
+</div>
