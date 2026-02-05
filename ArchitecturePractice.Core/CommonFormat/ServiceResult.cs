@@ -15,9 +15,9 @@
         {
             return new ServiceResult<T>
             {
-                IsSuccess = true,
+                IsSuccess = false,
                 Data = data,
-                Message = message
+                Message = "測試錯誤"
             };
         }
 

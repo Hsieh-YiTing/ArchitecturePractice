@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ArchitecturePractice.Common\ArchitecturePractice.Common.csproj" />
     <ProjectReference Include="..\ArchitecturePractice.Core\ArchitecturePractice.Core.csproj" />
     <ProjectReference Include="..\ArchitecturePractice.Repositories\ArchitecturePractice.Repositories.csproj" />
     <ProjectReference Include="..\ArchitecturePractice.Service\ArchitecturePractice.Services.csproj" />
