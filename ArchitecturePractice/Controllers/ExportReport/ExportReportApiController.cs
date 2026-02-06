@@ -1,12 +1,13 @@
-﻿using ArchitecturePractice.Core.ExportReport.Interface;
+﻿using ArchitecturePractice.Common.Logger;
+using ArchitecturePractice.Controllers.Base;
+using ArchitecturePractice.Core.ExportReport.Interface;
 using ArchitecturePractice.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArchitecturePractice.Controllers.ExportReport
 {
     [Route("api/export")]
-    [ApiController]
-    public class ExportReportApiController(IExportReportService exportReportService) : ControllerBase
+    public class ExportReportApiController(IExportReportService exportReportService) : ApiBaseController<ExportReportApiController>
     {
         private readonly IExportReportService _exportReportService = exportReportService;
 
@@ -17,6 +18,15 @@ namespace ArchitecturePractice.Controllers.ExportReport
         public async Task<IActionResult> GetRolesByCompanyId([FromQuery] int companyId)
         {
             var result = await _exportReportService.GetRoleListByCompanyIdAsync(companyId);
+
+            // 處理服務失敗的情況
+            if (!result.IsSuccess)
+            {
+                string errorMessage = string.IsNullOrEmpty(result.Message) ? "一級單位選單載入失敗。" : result.Message;
+                Logger.AppBusinessErrorLog(errorMessage);
+
+                return StatusCode(500, ServiceResultExtensions.ToApiResult(result, CurrentTraceId));
+            }
 
             return Ok(ServiceResultExtensions.ToApiResult(result));
         }

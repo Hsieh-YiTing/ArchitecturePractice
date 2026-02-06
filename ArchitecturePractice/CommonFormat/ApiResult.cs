@@ -1,5 +1,4 @@
 ﻿using ArchitecturePractice.Core.CommonFormat;
-using System.Diagnostics;
 
 namespace ArchitecturePractice.CommonFormat
 {
@@ -27,6 +26,22 @@ namespace ArchitecturePractice.CommonFormat
                 Message = source.Message,
                 Data = source.Data,
                 Errors = source.Errors,
+                TraceId = traceId
+            };
+        }
+
+        /// <summary>
+        /// API請求發生未預期錯誤物件。
+        /// </summary>
+        /// <param name="message">固定的錯誤訊息，避免洩漏過多資訊。</param>
+        /// <param name="traceId">API請求的追蹤識別碼。</param>
+        /// <returns>ApiResult<T>。</returns>
+        public static ApiResult<T> Failure(string message, string? traceId)
+        {
+            return new ApiResult<T>
+            {
+                IsSuccess = false,
+                Message = message,
                 TraceId = traceId
             };
         }
