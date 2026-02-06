@@ -31,16 +31,27 @@ try
 
     var app = builder.Build();
 
-    // 啟用 Serilog 的 HTTP 請求日誌
-    app.UseSerilogRequestLogging();
-
-    // Configure the HTTP request pipeline.
-    if (!app.Environment.IsDevelopment())
+    // 進入判斷後，開始分流錯誤處理
+    if (app.Environment.IsDevelopment())
     {
-        app.UseExceptionHandler("/Home/Error");
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"), appBuilder =>
+        {
+            appBuilder.UseExceptionHandler("/api/error");
+        });
+
+        app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"), appBuilder =>
+        {
+            appBuilder.UseExceptionHandler("/error/error");
+
+            // 處理400~599的狀態碼，主要是404、403，會將錯誤碼傳到Action去做判斷
+            appBuilder.UseStatusCodePagesWithReExecute("/error/error/{0}");
+        });
+
         app.UseHsts();
     }
+
+    // 啟用 Serilog 的 HTTP 請求日誌
+    app.UseSerilogRequestLogging();
 
     app.UseHttpsRedirection();
     app.UseRouting();

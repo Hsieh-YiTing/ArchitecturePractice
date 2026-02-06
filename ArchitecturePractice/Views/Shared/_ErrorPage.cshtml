@@ -1,0 +1,41 @@
+﻿@using ArchitecturePractice.ViewModel
+@model ErrorVm
+@{
+    ViewData["Title"] = "錯誤";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body text-center py-5">
+                    <h1 class="display-1 text-danger mb-4">😞</h1>
+                    <h2 class="text-danger mb-3">糟糕！發生錯誤了</h2>
+                    <p class="lead text-muted mb-4">
+                        系統發生未預期的錯誤，我們已經記錄此問題並將盡快修復。
+                    </p>
+
+                    @if (Model?.ShowRequestId ?? false)
+                    {
+                        <div class="alert alert-light border">
+                            <strong>錯誤追蹤編號：</strong>
+                            <code class="text-danger">@Model.RequestId</code>
+                            <p class="small text-muted mt-2 mb-0">
+                                如需協助，請提供此編號給技術支援人員。
+                            </p>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg me-2">
+                            <i class="bi bi-house-door"></i> 返回首頁
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left"></i> 返回上一頁
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
