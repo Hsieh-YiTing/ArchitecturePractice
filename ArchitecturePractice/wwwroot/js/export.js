@@ -177,6 +177,7 @@ const clearFormElements = (container) => {
  */
 const fetchCompanyRoles = async (companyId) => {
     const response = await fetch(`/api/export/roles?companyId=${companyId}`);
+    const result = await response.json();
 
     if (!response.ok) {
         const customError = new Error(result.message || `Http錯誤: ${response.status}`);
@@ -184,7 +185,6 @@ const fetchCompanyRoles = async (companyId) => {
         throw customError;
     }
 
-    const result = await response.json();
     return result;
 };
 

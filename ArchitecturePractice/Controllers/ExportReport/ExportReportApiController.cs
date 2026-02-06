@@ -1,23 +1,15 @@
-﻿using ArchitecturePractice.Core.ExportReport.Interface;
-using ArchitecturePractice.Common.Logger;
+﻿using ArchitecturePractice.Common.Logger;
+using ArchitecturePractice.Controllers.Base;
+using ArchitecturePractice.Core.ExportReport.Interface;
 using ArchitecturePractice.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace ArchitecturePractice.Controllers.ExportReport
 {
     [Route("api/export")]
-    [ApiController]
-    public class ExportReportApiController(ILogger<ExportReportApiController> logger, IExportReportService exportReportService) : ControllerBase
+    public class ExportReportApiController(IExportReportService exportReportService) : ApiBaseController<ExportReportApiController>
     {
-        private readonly ILogger<ExportReportApiController> _logger = logger;
-
         private readonly IExportReportService _exportReportService = exportReportService;
-
-        /// <summary>
-        /// 每次請求的TraceId。
-        /// </summary>
-        private string CurrentTraceId => Activity.Current?.TraceId.ToString() ?? HttpContext.TraceIdentifier;
 
         /// <summary>
         /// 根據請求的CompanyId取得對應的單位清單API。
@@ -31,7 +23,7 @@ namespace ArchitecturePractice.Controllers.ExportReport
             if (!result.IsSuccess)
             {
                 string errorMessage = string.IsNullOrEmpty(result.Message) ? "一級單位選單載入失敗。" : result.Message;
-                _logger.AppBusinessErrorLog(errorMessage);
+                Logger.AppBusinessErrorLog(errorMessage);
 
                 return StatusCode(500, ServiceResultExtensions.ToApiResult(result, CurrentTraceId));
             }
