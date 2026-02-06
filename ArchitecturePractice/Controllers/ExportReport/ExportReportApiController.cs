@@ -1,5 +1,7 @@
-﻿using ArchitecturePractice.Common.Logger;
+﻿using ArchitecturePractice.Common.Helper;
+using ArchitecturePractice.Common.Logger;
 using ArchitecturePractice.Controllers.Base;
+using ArchitecturePractice.Core.ExportReport.ExportModel.PersonalHealthExam;
 using ArchitecturePractice.Core.ExportReport.Interface;
 using ArchitecturePractice.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +31,13 @@ namespace ArchitecturePractice.Controllers.ExportReport
             }
 
             return Ok(ServiceResultExtensions.ToApiResult(result));
+        }
+
+        [HttpPost("personal-health-exam")]
+        public async Task<IActionResult> ExportPersonalHealthExam([FromBody] PersonalExportRequest reportParams)
+        {
+            JsonDebugHelper.ObjectValuePrint(reportParams);
+            return Ok();
         }
     }
 }
