@@ -1,8 +1,8 @@
-﻿using ArchitecturePractice.CommonFormat;
-using ArchitecturePractice.Common.Logger;
+﻿using ArchitecturePractice.Common.Logger;
 using ArchitecturePractice.Controllers.Base;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using ArchitecturePractice.Core.CommonFormat;
 
 namespace ArchitecturePractice.Controllers.Error
 {

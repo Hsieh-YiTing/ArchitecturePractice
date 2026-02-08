@@ -1,6 +1,4 @@
-﻿using ArchitecturePractice.Core.CommonFormat;
-
-namespace ArchitecturePractice.CommonFormat
+﻿namespace ArchitecturePractice.Core.CommonFormat
 {
     /// <summary>
     /// 統一回傳API執行的結果。
@@ -11,6 +9,11 @@ namespace ArchitecturePractice.CommonFormat
         /// API請求的追蹤識別碼。
         /// </summary>
         public string? TraceId { get; set; }
+
+        /// <summary>
+        /// Validator驗證錯誤集合。
+        /// </summary>
+        public IEnumerable<ValidationErrorResult>? ValidationErrors { get; set; }
 
         /// <summary>
         /// 取得API回傳結果，由Service結果與追蹤識別碼組成。
@@ -25,7 +28,6 @@ namespace ArchitecturePractice.CommonFormat
                 IsSuccess = source.IsSuccess,
                 Message = source.Message,
                 Data = source.Data,
-                Errors = source.Errors,
                 TraceId = traceId
             };
         }
@@ -43,6 +45,24 @@ namespace ArchitecturePractice.CommonFormat
                 IsSuccess = false,
                 Message = message,
                 TraceId = traceId
+            };
+        }
+
+        /// <summary>
+        /// Validator驗證失敗的API回傳結果，包含錯誤訊息、追蹤識別碼與驗證錯誤集合。
+        /// </summary>
+        /// <param name="message">錯誤訊息。</param>
+        /// <param name="traceId">API請求的追蹤識別碼。</param>
+        /// <param name="errors">驗證錯誤集合。</param>
+        /// <returns>ApiResult<T>。</returns>
+        public static ApiResult<T> DataValidationError(string? message, string? traceId, IEnumerable<ValidationErrorResult>? errors)
+        {
+            return new ApiResult<T>
+            {
+                IsSuccess = false,
+                Message = message,
+                TraceId = traceId,
+                ValidationErrors = errors
             };
         }
     }

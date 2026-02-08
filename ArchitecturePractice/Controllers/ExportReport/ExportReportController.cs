@@ -23,7 +23,7 @@ namespace ArchitecturePractice.Controllers.ExportReport
             if (!result.IsSuccess)
             {
                 string errorMessage = string.IsNullOrEmpty(result.Message) ? "公司選單載入失敗。" : result.Message;
-                Logger.AppBusinessErrorLog(errorMessage);
+                Logger.AppBusinessErrorLog(errorMessage, CurrentTraceId);
 
                 // 將錯誤訊息加入ModelState
                 ModelState.AddModelError(string.Empty, errorMessage);

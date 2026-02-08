@@ -19,10 +19,5 @@
         /// 執行成功取得的資料。
         /// </summary>
         public T? Data { get; set; }
-
-        /// <summary>
-        /// 執行失敗時的詳細錯誤資訊集合。
-        /// </summary>
-        public IEnumerable<ValidationErrorResult>? Errors { get; set; }
     }
 }

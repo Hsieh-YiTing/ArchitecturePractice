@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ArchitecturePractice.Core.CommonFormat;
+using Microsoft.Extensions.Logging;
 
 namespace ArchitecturePractice.Common.Logger
 {
@@ -22,7 +23,16 @@ namespace ArchitecturePractice.Common.Logger
         [LoggerMessage(
             EventId = 1002,
             Level = LogLevel.Warning,
-            Message = "應用程式業務邏輯錯誤 | 錯誤訊息為: {ErrorMessage}")]
-        public static partial void AppBusinessErrorLog(this ILogger logger, string errorMessage);
+            Message = "應用程式業務邏輯錯誤 | TraceId為: {TraceId} | 錯誤訊息為: {ErrorMessage}")]
+        public static partial void AppBusinessErrorLog(this ILogger logger, string? traceId, string errorMessage);
+
+        /// <summary>
+        /// 紀錄Model驗證失敗的訊息。
+        /// </summary>
+        [LoggerMessage(
+            EventId = 1003,
+            Level = LogLevel.Warning,
+            Message = "Model驗證失敗 | TraceId為: {TraceId} | 錯誤訊息為: {validationErrors}")]
+        public static partial void ValidationFailureLog(this ILogger logger, string? traceId, IEnumerable<ValidationErrorResult> validationErrors);
     }
 }

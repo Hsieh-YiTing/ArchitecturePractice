@@ -1,5 +1,6 @@
 using ArchitecturePractice.Repositories;
 using ArchitecturePractice.Services;
+using FluentValidation;
 using Serilog;
 
 // 先配置簡易Logger輸出到控制台，因為一開始還沒讀到appsetting檔案
@@ -27,7 +28,8 @@ try
 
     // 註冊管理
     builder.Services.AddService()
-                    .AddRepository(connectionString);
+                    .AddRepository(connectionString)
+                    .AddValidatorsFromAssemblyContaining<Program>(); // 直接掃描專案內的所有Validator並註冊
 
     var app = builder.Build();
 

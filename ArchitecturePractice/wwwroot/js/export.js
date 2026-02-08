@@ -241,15 +241,15 @@ const fetchExportReport = async (reportTab) => {
         body: JSON.stringify(params)
     });
 
-    //const result = await response.json();
+    const result = await response.json();
 
-    //if (!response.ok) {
-    //    const customError = new Error(result.message || `Http錯誤: ${response.status}`);
-    //    customError.data = result;
-    //    throw customError;
-    //}
+    if (!response.ok) {
+        const customError = new Error(result.message || `Http錯誤: ${response.status}`);
+        customError.data = result;
+        throw customError;
+    }
 
-    //return result;
+    return result;
 
     // 待回傳後下載檔案
     try {
@@ -387,11 +387,11 @@ const formatErrorToHtml = (error) => {
         htmlContent += `<p class="text-muted small mb-3">錯誤碼: ${error.data.traceId}</p>`;
     }
 
-    if (error.data.errors && error.data.errors.length > 0) {
+    if (error.data.validationErrors && error.data.validationErrors.length > 0) {
         htmlContent += `<p class="mb-1">詳細錯誤：</p>`;
         htmlContent += `<ul class="list-group list-group-flush">`;
 
-        error.data.errors.forEach(error => {
+        error.data.validationErrors.forEach(error => {
             htmlContent += `<li class="list-group-item list-group-item-danger py-1 small">${error.errorMessage}</li>`;
         });
 

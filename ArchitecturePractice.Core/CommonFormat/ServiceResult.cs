@@ -25,15 +25,13 @@
         /// Service執行失敗後，回傳的資料結構。
         /// </summary>
         /// <param name="message">執行失敗後的訊息。</param>
-        /// <param name="errors">驗證失敗後的錯誤集合，可空。</param>
         /// <returns>ServiceResult<T>。</returns>
-        public static ServiceResult<T> Fail(string message, IEnumerable<ValidationErrorResult>? errors = null)
+        public static ServiceResult<T> Failure(string message)
         {
             return new ServiceResult<T>
             {
                 IsSuccess = false,
-                Message = message,
-                Errors = errors
+                Message = message
             };
         }
     }
