@@ -1,5 +1,6 @@
 ﻿using ArchitecturePractice.Core.CommonFormat;
 using ArchitecturePractice.Core.ExportReport.DropdownModel;
+using ArchitecturePractice.Core.ExportReport.ExportModel;
 
 namespace ArchitecturePractice.Core.ExportReport.Interface
 {
@@ -20,5 +21,12 @@ namespace ArchitecturePractice.Core.ExportReport.Interface
         /// <param name="companyId">公司ID。</param>
         /// <returns>ServiceResult<IEnumerable<RoleForDropDownDto>>>。</returns>
         Task<ServiceResult<IEnumerable<RoleForDropDownModel>>> GetRoleListByCompanyIdAsync(int companyId);
+
+        /// <summary>
+        /// 匯出報告方法。
+        /// </summary>
+        /// <param name="exportRequestModel">傳入的Model。/param>
+        /// <returns>ExportResultModel。</returns>
+        Task<ServiceResult<ExportResultModel>> ExportPersonalHealthExamAsync(ExportRequestBaseModel exportRequestModel);
     }
 }

@@ -7,7 +7,7 @@ namespace ArchitecturePractice.Validator.ExportReport
     /// ExportReport匯出基本欄位資料驗證器基底類別。
     /// </summary>
     public abstract class ExportBaseModelValidator<T> : AbstractValidator<T>
-        where T : ExportBaseModel
+        where T : ExportRequestBaseModel
     {
         protected ExportBaseModelValidator()
         {
