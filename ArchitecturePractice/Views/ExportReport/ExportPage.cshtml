@@ -72,7 +72,7 @@
                 <div class="row align-items-center mb-3">
                     <div class="col-auto d-flex">
                         <label class="col-form-label" for="personal-export-mode">報表類型：</label>
-                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<PersonalHealthExamOption>()" id="personal-export-mode" data-field="reportType">
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<PersonalHealthExamOption>()" id="personal-export-mode" data-field="reportOption">
                         </select>
                     </div>
                     <div class="col-auto d-flex">
@@ -167,7 +167,7 @@
                     </div>
                     <div class="col-auto d-flex">
                         <label class="col-form-label" for="summary-export-mode">報表類型：</label>
-                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<SummaryReportOption>()" id="summary-export-mode" data-field="reportType">
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<SummaryReportOption>()" id="summary-export-mode" data-field="reportOption">
                         </select>
                     </div>
                     <div class="col-auto d-flex">
@@ -243,7 +243,7 @@
                     </div>
                     <div class="col-auto d-flex">
                         <label class="col-form-label" for="exception-export-mode">報表類型：</label>
-                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ExceptionReportOption>()" id="exception-export-mode" data-field="reportType">
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<ExceptionReportOption>()" id="exception-export-mode" data-field="reportOption">
                         </select>
                     </div>
                     <div class="col-auto d-flex">
@@ -301,7 +301,7 @@
                     </div>
                     <div class="col-auto d-flex">
                         <label class="col-form-label" for="company-export-mode">報表類型：</label>
-                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<CompanyReportOption>()" id="company-export-mode" data-field="reportType">
+                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<CompanyReportOption>()" id="company-export-mode" data-field="reportOption">
                         </select>
                     </div>
                     <div class="col-auto d-flex">
@@ -347,11 +347,6 @@
                             <option value="1">員工+員眷</option>
                             <option value="2">員工</option>
                             <option value="3">員眷</option>
-                        </select>
-                    </div>
-                    <div class="col-auto d-none">
-                        <label class="col-form-label" for="questionnaire-export-mode">報表類型：</label>
-                        <select class="form-select w-auto" asp-items="Html.GetEnumSelectList<QuestionnaireReportOption>()" id="questionnaire-export-mode" data-field="reportType">
                         </select>
                     </div>
                     <div class="col-auto d-flex">

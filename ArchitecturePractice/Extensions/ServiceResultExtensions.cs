@@ -1,5 +1,4 @@
-﻿using ArchitecturePractice.CommonFormat;
-using ArchitecturePractice.Core.CommonFormat;
+﻿using ArchitecturePractice.Core.CommonFormat;
 
 namespace ArchitecturePractice.Extensions
 {

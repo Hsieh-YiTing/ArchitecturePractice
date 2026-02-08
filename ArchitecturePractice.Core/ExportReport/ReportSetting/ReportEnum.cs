@@ -36,12 +36,6 @@
         健檢資料表 = 4
     }
 
-    // 問卷報告匯出選項，實際沒有這個，為了符合泛型條件設置
-    public enum QuestionnaireReportOption
-    {
-        None = 0
-    }
-
     // 報告匯出格式
     public enum ReportFormat
     {
