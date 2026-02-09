@@ -63,7 +63,18 @@ namespace ArchitecturePractice.Controllers.ExportReport
 
                 return BadRequest(ApiResult<PersonalExportRequest>.DataValidationError("驗證失敗。", CurrentTraceId, validationErrors));
             }
-            return Ok();
+
+            var exportResult = await _exportReportService.ExportPersonalHealthExamAsync(reportParams);
+
+            if (!exportResult.IsSuccess)
+            {
+                string errorMessage = string.IsNullOrEmpty(exportResult.Message) ? "個人健檢報告匯出失敗。" : exportResult.Message;
+                Logger.AppBusinessErrorLog(errorMessage, CurrentTraceId);
+
+                return StatusCode(500, ServiceResultExtensions.ToApiResult(exportResult, CurrentTraceId));
+            }
+
+            return Ok(ServiceResultExtensions.ToApiResult(exportResult));
         }
     }
 }
