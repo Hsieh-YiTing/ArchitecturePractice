@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 
 namespace ArchitecturePractice.Controllers.Base
@@ -12,7 +13,7 @@ namespace ArchitecturePractice.Controllers.Base
         /// <summary>
         /// Service Locator模式，呼叫Logger時候才會取得ILogger物件。
         /// </summary>
-        protected ILogger<T> Logger => _logger ??= HttpContext.RequestServices.GetService<ILogger<T>>() ?? throw new InvalidOperationException($"無法取得{typeof(T).Name}的ILogger物件。");
+        protected ILogger<T> Logger => _logger ??= HttpContext.RequestServices.GetRequiredService<ILogger<T>>() ?? throw new InvalidOperationException($"無法取得{typeof(T).Name}的ILogger物件。");
 
         /// <summary>
         /// 目前請求的TraceId。

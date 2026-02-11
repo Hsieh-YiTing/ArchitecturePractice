@@ -5,7 +5,7 @@ namespace ArchitecturePractice.Core.ExportReport.ExportModel
     /// <summary>
     /// 各報表匯出基本欄位資料基底類別。
     /// </summary>
-    public class ExportBaseModel
+    public class ExportRequestBaseModel
     {
         /// <summary>
         /// 健檢查詢起始日期。

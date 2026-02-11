@@ -1,5 +1,6 @@
 using ArchitecturePractice.Repositories;
 using ArchitecturePractice.Services;
+using ArchitecturePractice.Core.ExportReport.ReportSetting;
 using FluentValidation;
 using Serilog;
 
@@ -25,6 +26,10 @@ try
 
     // 取得資料庫連線字串
     string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("找不到資料庫連線字串。");
+
+    // 取得appsettings內的ReportConfig，並填入ReportConfig類別，再註冊到DI，最後透過IOptions<T>注入使用
+    builder.Services.Configure<ReportConfig>(
+        builder.Configuration.GetSection("ReportConfig"));
 
     // 註冊管理
     builder.Services.AddService()

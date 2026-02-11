@@ -17,6 +17,7 @@ namespace ArchitecturePractice.Repositories
         {
             services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
             services.AddScoped<IExportReportDropdownRepository, ExportReportDropdownRepository>();
+            services.AddScoped<IPersonalExportRepository, PersonalExportRepository>();
             return services;
         }
     }

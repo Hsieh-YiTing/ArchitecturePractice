@@ -5,7 +5,7 @@ namespace ArchitecturePractice.Core.ExportReport.ExportModel.PersonalHealthExam
     /// <summary>
     /// View傳來的個人健檢匯出資料。
     /// </summary>
-    public class PersonalExportRequest : ExportBaseModel
+    public class PersonalExportRequest : ExportRequestBaseModel
     {
         /// <summary>
         /// 套餐代碼。
