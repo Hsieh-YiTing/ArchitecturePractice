@@ -205,6 +205,13 @@ const handleExportButtons = () => {
             if (reportTab) {
                 const response = await fetchExportReport(reportTab);
                 console.log('檔案匯出成功:', response);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '下載成功',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
             }
         } catch (error) {
             console.error('檔案匯出失敗:', error.message);
@@ -221,7 +228,6 @@ const handleExportButtons = () => {
 /**
  * 取得欄位資料後呼叫API進行報表匯出。
  * @param {any} reportTab - Tab的ID。
- * @returns {Promise<byte[]>} - 回傳Promise，解析後會得到檔案的byte陣列。
  * @throws {Error} - 若API回傳錯誤則拋出Error物件。
  */
 const fetchExportReport = async (reportTab) => {
@@ -233,82 +239,69 @@ const fetchExportReport = async (reportTab) => {
 
     const params = collectReportTabParameters(reportTab);
 
-    const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
+    // 顯示匯出進度的Swal
+    Swal.fire({
+        title: '資料匯出中',
+        html: `
+            <div class="mb-2">正在從伺服器下載資料...</div>
+            <div class="progress" style="height: 20px;">
+                <div id="swal-progress-bar" 
+                     class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: 100%; background-color: #3085d6;">
+                </div>
+            </div>
+            <div id="swal-progress-text" style="margin-top: 10px; font-weight: bold; color: #555;">
+                已下載: 0 Bytes
+            </div>
+        `,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading(); // 顯示轉圈圈
+        }
     });
 
-    const result = await response.json();
-
-    if (!response.ok) {
-        const customError = new Error(result.message || `Http錯誤: ${response.status}`);
-        customError.data = result;
-        throw customError;
-    }
-
-    return result;
-
-    // 待回傳後下載檔案
     try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+        const result = await fetchWithProgress(
+            endpoint, 
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(params)
             },
-            body: JSON.stringify(params)
-        });
+            (loadedBytes) => {
+                const progressText = document.getElementById('swal-progress-text');
 
-        // 1. 先檢查回應是否成功
-        if (!response.ok) {
-            // 如果失敗 (例如 400 或 500)，後端通常回傳 JSON 錯誤訊息
-            // 嘗試讀取 JSON 錯誤內容
-            let errorMsg = `Http錯誤: ${response.status}`;
-            try {
-                const errorResult = await response.json();
-                if (errorResult.message) errorMsg = errorResult.message;
-            } catch (e) {
-                // 如果無法解析 JSON，就維持原本的 HTTP Status 錯誤訊息
+                if (progressText) {
+                    // 使用工具函式進行轉換
+                    progressText.textContent = `已下載: ${formatBytes(loadedBytes)}`;
+                }
             }
-            throw new Error(errorMsg);
+        );
+
+        if (!result.isSuccess) {
+            const customError = new Error(result.message || `Http錯誤: ${result.status}`);
+            customError.data = result;
+            throw customError;
         }
 
-        // 2. 嘗試從 Header 取得後端設定的檔名 (Content-Disposition)
-        // 後端範例: return File(bytes, "app/pdf", "HealthReport_2024.pdf");
-        let filename = "download.pdf"; // 預設檔名
-        const disposition = response.headers.get('Content-Disposition');
-        if (disposition && disposition.indexOf('attachment') !== -1) {
-            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-            const matches = filenameRegex.exec(disposition);
-            if (matches != null && matches[1]) {
-                filename = matches[1].replace(/['"]/g, '');
-                // 解碼中文檔名 (如果後端有做 URL Encode)
-                filename = decodeURIComponent(filename);
+        if (result.data && result.data.fileContent) {
+            // 下載完成後更新Swal的文字提示
+            const progressText = document.getElementById('swal-progress-text');
+
+            if (progressText) {
+                progressText.textContent = "下載完成，正在處理檔案..."
             }
+
+            downloadFileFromBase64(result.data.fileContent, result.data.fileName, result.data.contentType);
+        } else {
+             throw new Error("請求成功，但伺服器未回傳檔案內容");
         }
-
-        // 3. 將回應轉為 Blob (二進位物件)
-        const blob = await response.blob();
-
-        // 4. 建立下載連結並觸發點擊
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename; // 設定下載的檔名
-        document.body.appendChild(a); // Firefox 需要將元素加入 body 才能觸發點擊
-        a.click();
-
-        // 5. 清理資源
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        return true; // 表示下載成功
-
     } catch (error) {
-        console.error("下載失敗:", error);
-        throw error; // 往外拋出讓 UI 層處理 (例如顯示 SweetAlert)
+        console.error("未預期下載錯誤:", error);
+        throw error; 
     }
 };
 
@@ -367,6 +360,127 @@ const getFiledElementValue = (fieldElement) => {
     }
 
     return null;
+};
+
+/**
+ * 使用Fetch API搭配ReadableStream來實現下載進度回報。
+ * @param {string} url - API的URL。
+ * @param {object} options - Fetch的選項，例如method、headers、body等。
+ * @param {function} onProgress - 下載進度回報的callback函式，會傳入已下載的bytes數量。
+ * @returns {Promise<any>} - 回傳組合解析後的JSON資料。
+ */
+const fetchWithProgress = async (url, options, onProgress) => {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+        throw new Error(`Http錯誤: ${response.status}`);
+    }
+
+    // 取得ReadableStream的reader
+    const reader = response.body.getReader();
+
+    // 下載過程中累積已下載的bytes數量
+    let receivedLength = 0;
+
+    // 用來暫存下載的資料塊，最後可以組合成完整檔案
+    let chunks = []; 
+
+    // 持續讀取資料直到完成
+    while (true) {
+        // read()回傳後物件解構
+        // done: 是否傳輸結束 (true/false)，value: 這一塊資料的內容 (Uint8Array 二進位陣列)
+        const { done, value } = await reader.read();
+
+        if (done) {
+            break;
+        }
+
+        // 儲存資料，並記錄目前的長度
+        chunks.push(value);
+        receivedLength += value.length;
+
+        // 檢查是否有傳入方法，有就回報目前已下載的bytes數量
+        if (onProgress) {
+            onProgress(receivedLength);
+        }
+    }
+
+    // 開始組合資料
+    const chunksAll = new Uint8Array(receivedLength); 
+    let position = 0;
+
+    // 把chunks裡面的每一個碎片資料貼到chunksAll裡面，最後就會得到完整的二進位資料
+    for (let chunk of chunks) {
+        chunksAll.set(chunk, position); // 把碎片資料貼上
+        position += chunk.length;       // 索引往後移
+    }
+
+    // 把二進位資料 (Uint8Array) 解碼成文字 (string)
+    const textDecoder = new TextDecoder("utf-8");
+    const jsonString = textDecoder.decode(chunksAll);
+
+    // 最後把 JSON 字串轉成物件並回傳
+    return JSON.parse(jsonString);
+};
+
+/**
+ * 將bytes進行轉換，最大寫到GB，長度為小數點後2位。
+ * @param {number} bytes - 要轉換的bytes數字。
+ * @param {number} decimals - 小數位數，預設為2。
+ */
+const formatBytes = (byte,  decimals = 2) => {
+    // 確認傳入的bytes數字有效
+    if (byte === 0) {
+        return '0 Bytes';
+    }
+
+    // 定義出常數
+    const k = 1024; // 1 KB = 1024 Bytes
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+
+    // 使用對數方式，算出傳入byte位於哪個size範圍
+    const i = Math.floor(Math.log(byte) / Math.log(k));
+
+    // 算出分母，並與bytes相除，最後使用toFixed()保留小數位數，組合單位後回傳
+    return parseFloat((byte / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+};
+
+/**
+ * 將Base64字串轉換為Blob並觸發下載。
+ * @param {string} base64String - Base64編碼的字串。
+ * @param {string} fileName - 下載的檔案名稱。
+ * @param {string} contentType - 檔案的MIME類型。
+ */
+const downloadFileFromBase64 = (base64String, fileName, contentType) => {
+    // 瀏覽器內建方法，用來解碼Base64
+    const bytes = atob(base64String);
+
+    // 解碼後字串轉換為Uint8Array
+    const byteNumbers = new Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) {
+        byteNumbers[i] = bytes.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // 建立Blob物件
+    const blob = new Blob([byteArray], { type: contentType });
+
+    // 建立下載連結並觸發點擊
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = fileName;
+
+    document.body.appendChild(a);
+    a.click();
+
+    // 設置延遲100ms後清理資源，確保下載流程完成
+    setTimeout(() => {
+        document.body.removeChild(a); // 將剛剛加入的a元素移除
+        window.URL.revokeObjectURL(url); // 釋放Blob URL資源，否則會一直緩存在瀏覽器記憶體
+    }, 100);
 };
 
 /**
