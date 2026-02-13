@@ -23,7 +23,8 @@ namespace ArchitecturePractice.Services.FactoryAndGenerator
                 // 第二層Switch: 比對第一層轉型後的ReportOption與ReportFormat，true就會回傳對應的產生器
                 PersonalExportRequest personalExportRequest => (personalExportRequest.ReportOption, personalExportRequest.ReportFormat) switch
                 {
-                    (PersonalHealthExamOption.包含前次, ReportFormat.PDF) => _serviceProvider.GetRequiredService<PersonalExportGenerator>(),
+                    (PersonalHealthExamOption.不含前次, ReportFormat.PDF) => _serviceProvider.GetRequiredService<PersonalExportGenerator>(),
+                    (PersonalHealthExamOption.包含前次, ReportFormat.PDF) => _serviceProvider.GetRequiredService<PersonalComparisonExportGenerator>(),
                     _ => throw new Exception("個人健檢匯出找不到對應的ReportGenerator。")
                 },
 

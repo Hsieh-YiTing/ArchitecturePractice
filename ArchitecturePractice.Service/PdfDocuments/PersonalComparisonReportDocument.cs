@@ -6,10 +6,7 @@ using QuestPDF.Infrastructure;
 
 namespace ArchitecturePractice.Services.PdfDocuments
 {
-    /// <summary>
-    /// 實作IDocument介面，以物件方式建構文件，組成個人健康檢查報告。
-    /// </summary>
-    internal class PersonalHealthExamDocument(PersonalHealthExamModel model, ReportConfig reportConfig) : IDocument
+    internal class PersonalComparisonReportDocument(PersonalHealthExamModel model, ReportConfig reportConfig) : IDocument
     {
         private readonly PersonalHealthExamModel _model = model;
 
@@ -166,15 +163,15 @@ namespace ArchitecturePractice.Services.PdfDocuments
                 col.Item()
                    .Element(ComposeInspectionItems);
 
-                // 3. 醫師總評
-                col.Item()
-                   .TableItemContainerStyle()
-                   .Element(ComposeDoctorReview);
+                //// 3. 醫師總評
+                //col.Item()
+                //   .TableItemContainerStyle()
+                //   .Element(ComposeDoctorReview);
 
-                // 4. 頁尾資訊
-                col.Item()
-                   .TableItemContainerStyle()
-                   .Element(ComposeFooter);
+                //// 4. 頁尾資訊
+                //col.Item()
+                //   .TableItemContainerStyle()
+                //   .Element(ComposeFooter);
             });
         }
 
@@ -241,12 +238,12 @@ namespace ArchitecturePractice.Services.PdfDocuments
                     }
 
                     // 非數字報告表格
-                    if (nonNumericItems.Count != 0)
-                    {
-                        col.Item()
-                           .TableItemContainerStyle()
-                           .Element(c => ComposeNonNumericTable(c, categoryGroup.Key, nonNumericItems));
-                    }
+                    //if (nonNumericItems.Count != 0)
+                    //{
+                    //    col.Item()
+                    //       .TableItemContainerStyle()
+                    //       .Element(c => ComposeNonNumericTable(c, categoryGroup.Key, nonNumericItems));
+                    //}
                 }
             });
         }
@@ -330,160 +327,6 @@ namespace ArchitecturePractice.Services.PdfDocuments
                     table.Cell().TableValueContainerStyle().Text(item.單位);
                     table.Cell().TableValueContainerStyle().Text(item.正常值);
                 });
-        }
-
-        /// <summary>
-        /// 渲染非數字類型的表格。
-        /// </summary>
-        private void ComposeNonNumericTable(IContainer container, string groupName, List<HealthReportItemModel> reportItems)
-        {
-            ComposeBaseTable(container, groupName, _nonNumericItemHeaderSet, reportItems,
-                col =>
-                {
-                    // 第一欄: 項目
-                    col.RelativeColumn(3);
-
-                    // 第二欄: 檢查結果
-                    col.RelativeColumn(2);
-
-                    // 第三欄: 單位
-                    col.RelativeColumn(2);
-                },
-                (table, item) =>
-                {
-                    // 判斷是否為異常值，並設定樣式
-                    bool isAbnormal = _reportConfig.Rules?.AbnormalCodes.Contains(item.檢驗評值) == true;
-                    var resultStyle = isAbnormal ? PdfStyleExtensions.AbnormalValueStyle : TextStyle.Default;
-
-                    // 開始寫入每一列資料
-                    table.Cell().TableValueContainerStyle().Text(item.項目);
-                    table.Cell().TableValueContainerStyle().Text(item.結果).Style(resultStyle);
-                    table.Cell().TableValueContainerStyle().Text(item.單位);
-                });
-        }
-        #endregion
-
-        #region --- 區塊 3: 表格內容(二): 醫師總評、頁尾資訊 ---
-        /// <summary>
-        /// 醫師總評表格。
-        /// </summary>
-        private void ComposeDoctorReview(IContainer container)
-        {
-            container.Table(table =>
-            {
-                table.ColumnsDefinition(col =>
-                {
-                    // 第一欄: 器官
-                    col.RelativeColumn(15);
-
-                    // 第二欄: 診斷
-                    col.RelativeColumn(40);
-
-                    // 第三欄: 建議
-                    col.RelativeColumn(40);
-                });
-
-                // 表格標題列與欄位名稱
-                table.Header(header =>
-                {
-                    header.Cell()
-                          .ColumnSpan(3)
-                          .Text("◆醫師總評")
-                          .Style(PdfStyleExtensions.TableTitleStyle);
-
-                    foreach (var headerItem in _doctorReviewHeaderSet)
-                    {
-                        header.Cell()
-                              .TableKeyContainerStyle()
-                              .Text(headerItem)
-                              .Style(PdfStyleExtensions.KeyStyle);
-                    }
-                });
-
-                // 表格內容
-                foreach (var item in _model.OrganReviewReports)
-                {
-                    table.Cell().TableValueContainerStyle().Text(item.器官);
-                    table.Cell().TableValueContainerStyle().Text(item.診斷);
-                    table.Cell().TableValueContainerStyle().Text(item.建議);
-                }
-            });
-        }
-
-        /// <summary>
-        /// 頁尾資訊設計。
-        /// </summary>
-        private void ComposeFooter(IContainer container)
-        {
-            container.Column(col =>
-            {
-                // 第一行頁尾顯示:【註】
-                col.Item()
-                   .Text(_reportConfig.RiskNote?.Title)
-                   .Style(PdfStyleExtensions.KeyStyle);
-
-                // 第二行頁尾顯示: 心血管疾病風險計算參考網址
-                col.Item()
-                   .Text(_reportConfig.RiskNote?.Content);
-
-                // 第三行表格欄位定義
-                col.Item()
-                   .TableItemContainerStyle()
-                   .Table(table =>
-                   {
-                       table.ColumnsDefinition(c =>
-                       {
-                           // 第一欄: 負責醫師、醫師章
-                           c.RelativeColumn();
-
-                           // 第二欄: 醫師證號
-                           c.RelativeColumn();
-                       });
-
-                       // 負責醫師、醫師章欄位內容
-                       table.Cell()
-                            .DoctorInfoContainerStyle()
-                            .Row(row =>
-                            {
-                                string doctorFormat = _reportConfig.DoctorDisplay?.NameFormat ?? "無負責醫師";
-
-                                row.AutoItem()
-                                   .Text(string.Format(doctorFormat, _model.DoctorInfo.負責醫師));
-
-                                if (_model.DoctorInfo.醫師章授權 == 1)
-                                {
-                                    row.ConstantItem(80)
-                                           .DoctorSealContainerStyle()
-                                           .Text(text =>
-                                           {
-                                               text.Span("醫師")
-                                                   .Style(PdfStyleExtensions.DoctorSealStyle);
-
-                                               text.Span(" ");
-
-                                               text.Span(_model.DoctorInfo.負責醫師)
-                                                   .Style(PdfStyleExtensions.DoctorSealNameStyle);
-                                           });
-                                }
-                            });
-
-                       // 醫師證號欄位內容
-                       table.Cell()
-                            .DoctorInfoContainerStyle()
-                            .Row(row =>
-                            {
-                                string licenseFormat = _reportConfig.DoctorDisplay?.LicenseFormat ?? "無醫師證號";
-
-                                row.AutoItem()
-                                   .Text(string.Format(licenseFormat, _model.DoctorInfo.醫師證號));
-                            });
-                   });
-
-                // 第四行頁尾顯示: 醫院聯絡資訊
-                col.Item()
-                   .ContactInfoContainerStyle()
-                   .Text(_reportConfig.Organization?.ContactInfo);
-            });
         }
         #endregion
     }

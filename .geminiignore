@@ -1,0 +1,20 @@
+# 排除編譯產出與暫存 (這會產生大量碎檔)
+**/bin/
+**/obj/
+**/dist/
+**/build/
+**/.vs/
+**/.vscode/
+
+# 排除第三方套件 (絕對要排除，否則額度秒殺)
+**/node_modules/
+**/packages/
+
+# 排除大型資源檔與權限檔
+**/*.exe
+**/*.dll
+**/*.pdb
+**/*.xml
+**/*.json
+**/*.log
+.gemini/

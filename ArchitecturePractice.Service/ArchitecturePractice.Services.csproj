@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ArchitecturePractice.Common\ArchitecturePractice.Common.csproj" />
     <ProjectReference Include="..\ArchitecturePractice.Core\ArchitecturePractice.Core.csproj" />
   </ItemGroup>
 

@@ -21,6 +21,7 @@ namespace ArchitecturePractice.Services
             // PDF授權以及產生器
             QuestPDF.Settings.License = LicenseType.Community;
             services.AddScoped<PersonalExportGenerator>();
+            services.AddScoped<PersonalComparisonExportGenerator>();
             return services;
         }
     }
