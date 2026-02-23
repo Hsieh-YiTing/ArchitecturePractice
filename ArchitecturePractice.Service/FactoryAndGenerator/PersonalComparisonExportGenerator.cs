@@ -14,6 +14,7 @@ namespace ArchitecturePractice.Services.FactoryAndGenerator
 
         private readonly ReportConfig _reportConfig = reportConfig.Value;
 
+        /// <inheritdoc/>
         public async Task<ExportResultModel> GenerateReportAsync(ExportRequestBaseModel model)
         {
             // 判斷傳入的Model是否為ExportPersonalHealthExamModel，並賦值給變數

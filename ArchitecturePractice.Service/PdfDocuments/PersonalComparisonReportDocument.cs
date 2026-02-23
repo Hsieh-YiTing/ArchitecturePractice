@@ -1,5 +1,4 @@
-﻿using ArchitecturePractice.Core.ExportReport.ExportModel.PersonalHealthExam;
-using ArchitecturePractice.Core.ExportReport.ReportSetting;
+﻿using ArchitecturePractice.Core.ExportReport.ReportSetting;
 using ArchitecturePractice.Services.PdfTools;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
